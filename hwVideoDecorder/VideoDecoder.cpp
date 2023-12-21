@@ -3,10 +3,10 @@
 #include "framework.h"
 #include "VideoDecoder.h"
 #include <stdexcept>
-
-VideoDecoder::VideoDecoder(const char* path) : videoPath(path),
-formatContext(nullptr), codec(nullptr), codecContext(nullptr),
-window(nullptr), renderer(nullptr), texture(nullptr), videoStreamIndex(-1) {}
+VideoDecoder::VideoDecoder(const std::string& path)
+    : videoPath(path), formatContext(nullptr), codec(nullptr),
+    codecContext(nullptr), window(nullptr), renderer(nullptr),
+    texture(nullptr), videoStreamIndex(-1) {}
 
 VideoDecoder::~VideoDecoder() {
     av_frame_free(nullptr);
@@ -40,7 +40,7 @@ void VideoDecoder::Play() {
 }
 
 void VideoDecoder::OpenInputFile() {
-    if (avformat_open_input(&formatContext, videoPath, nullptr, nullptr) < 0)
+    if (avformat_open_input(&formatContext, videoPath.c_str(), nullptr, nullptr) < 0)
         throw std::runtime_error("Could not open the file");
 }
 
@@ -117,6 +117,14 @@ void VideoDecoder::DecodeAndRenderFrames() {
             }
         }
         av_packet_unref(&packet);
+
+        // Check for SDL_QUIT events
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                return;
+            }
+        }
     }
 
     av_frame_free(&decodedFrame);

@@ -10,25 +10,20 @@ extern "C" {
 }
 #include <SDL.h>
 #include <SDL_main.h>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 
 class VideoDecoder {
 public:
-    VideoDecoder(const char* videoPath);
+    VideoDecoder(const std::string& path);
     ~VideoDecoder();
 
     void Initialize();
     void Play();
 
 private:
-    const char* videoPath;
-    AVFormatContext* formatContext;
-    AVCodec* codec;
-    AVCodecContext* codecContext;
-    SDL_Window* window;
-    SDL_Renderer* renderer;
-    SDL_Texture* texture;
-    int videoStreamIndex;
-
+    std::string videoPath;
     void OpenInputFile();
     void FindVideoStream();
     void OpenCodec();
@@ -36,4 +31,12 @@ private:
     void CreateSDLRenderer();
     void CreateSDLTexture();
     void DecodeAndRenderFrames();
+
+    AVFormatContext* formatContext;
+    AVCodec* codec;
+    AVCodecContext* codecContext;
+    SDL_Window* window;
+    SDL_Renderer* renderer;
+    SDL_Texture* texture;
+    int videoStreamIndex;
 };
