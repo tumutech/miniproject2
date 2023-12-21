@@ -88,14 +88,20 @@ void VideoDecoder::CreateSDLRenderer() {
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!renderer)
         throw std::runtime_error("SDL renderer creation failed: " + std::string(SDL_GetError()));
+
+    // Set logical resolution
+    SDL_RenderSetLogicalSize(renderer, codecContext->width, codecContext->height);
 }
 
+
 void VideoDecoder::CreateSDLTexture() {
-    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_UNKNOWN, SDL_TEXTUREACCESS_STREAMING,
+    // Use the pixel format and dimensions of the decoded video frame
+    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_YV12, SDL_TEXTUREACCESS_STREAMING,
         codecContext->width, codecContext->height);
     if (!texture)
         throw std::runtime_error("SDL texture creation failed: " + std::string(SDL_GetError()));
 }
+
 
 void VideoDecoder::DecodeAndRenderFrames() {
     AVPacket packet;
@@ -109,10 +115,28 @@ void VideoDecoder::DecodeAndRenderFrames() {
         if (packet.stream_index == videoStreamIndex) {
             avcodec_send_packet(codecContext, &packet);
             while (avcodec_receive_frame(codecContext, decodedFrame) == 0) {
+                // Update SDL texture
                 SDL_UpdateTexture(texture, nullptr, decodedFrame->data[0], decodedFrame->linesize[0]);
+
+                // Clear the renderer
                 SDL_RenderClear(renderer);
-                SDL_RenderCopy(renderer, texture, nullptr, nullptr);
+
+                // Calculate destination rectangle to maintain aspect ratio
+                SDL_Rect destRect;
+                destRect.x = 0;
+                destRect.y = 0;
+
+                float aspectRatio = static_cast<float>(decodedFrame->width) / static_cast<float>(decodedFrame->height);
+                destRect.w = static_cast<int>(codecContext->width);
+                destRect.h = static_cast<int>(codecContext->width / aspectRatio);
+
+                // Render the texture to the calculated destination rectangle
+                SDL_RenderCopy(renderer, texture, nullptr, &destRect);
+
+                // Update the renderer
                 SDL_RenderPresent(renderer);
+
+                // Delay to control frame rate (adjust as needed)
                 SDL_Delay(16);
             }
         }
