@@ -100,8 +100,21 @@ namespace TestCases
             try
             {
                 videoDecoder.Initialize();
+
+                // Measure and assert video decoding performance
+                const auto startTime = std::chrono::high_resolution_clock::now();
+
                 // Your other performance-related assertions or checks go here
                 videoDecoder.Play();  // Assuming Play is responsible for video decoding and rendering
+
+                const auto endTime = std::chrono::high_resolution_clock::now();
+                const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+
+                // Example: Assert that the video decoding time is within an acceptable range (adjust as needed)
+                const auto expectedDuration = 5000;  // 5000 milliseconds (5 seconds) as an example
+                Assert::IsTrue(duration < expectedDuration, L"Video decoding time exceeded the expected duration");
+
+                // Additional performance assertions can be added based on specific metrics or requirements
             }
             catch (const std::exception& ex)
             {
@@ -109,6 +122,7 @@ namespace TestCases
                 Assert::Fail(L"Exception occurred: ");
             }
         }
+
 
     };
 }
