@@ -16,23 +16,27 @@ extern "C" {
 
 class VideoDecoder {
 public:
+    void OpenInputFile();
+    AVFormatContext* formatContext;
+    void FindVideoStream();
     VideoDecoder(const std::string& path);
     ~VideoDecoder();
 
     void Initialize();
     void Play();
+    int GetVideoStreamIndex() const {
+        return videoStreamIndex;
+    }
 
 private:
     std::string videoPath;
-    void OpenInputFile();
-    void FindVideoStream();
     void OpenCodec();
     void CreateSDLWindow();
     void CreateSDLRenderer();
     void CreateSDLTexture();
     void DecodeAndRenderFrames();
+    void PrintVideoMetadata() const;
 
-    AVFormatContext* formatContext;
     AVCodec* codec;
     AVCodecContext* codecContext;
     SDL_Window* window;

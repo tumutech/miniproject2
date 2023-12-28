@@ -3,10 +3,12 @@
 #include "framework.h"
 #include "VideoDecoder.h"
 #include <stdexcept>
+#include <iostream>
 VideoDecoder::VideoDecoder(const std::string& path)
     : videoPath(path), formatContext(nullptr), codec(nullptr),
     codecContext(nullptr), window(nullptr), renderer(nullptr),
     texture(nullptr), videoStreamIndex(-1) {}
+
 
 VideoDecoder::~VideoDecoder() {
     av_frame_free(nullptr);
@@ -22,10 +24,16 @@ VideoDecoder::~VideoDecoder() {
     if (window)
         SDL_DestroyWindow(window);
 
+    // Quit SDL only once in the destructor
     SDL_Quit();
 }
 
 void VideoDecoder::Initialize() {
+    // Check if SDL is initialized
+    if (SDL_WasInit(SDL_INIT_VIDEO) == 0) {
+        // SDL is not initialized; throw an exception
+        throw std::runtime_error("SDL is not initialized. Call SDL_Init before initializing the VideoDecoder.");
+    }
     avformat_network_init();
     OpenInputFile();
     FindVideoStream();
@@ -33,7 +41,10 @@ void VideoDecoder::Initialize() {
     CreateSDLWindow();
     CreateSDLRenderer();
     CreateSDLTexture();
+    PrintVideoMetadata();
 }
+
+
 
 void VideoDecoder::Play() {
     DecodeAndRenderFrames();
@@ -75,9 +86,6 @@ void VideoDecoder::OpenCodec() {
 }
 
 void VideoDecoder::CreateSDLWindow() {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-        throw std::runtime_error("SDL initialization failed: " + std::string(SDL_GetError()));
-
     window = SDL_CreateWindow("Decoded Video", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         codecContext->width, codecContext->height, SDL_WINDOW_SHOWN);
     if (!window)
@@ -88,9 +96,21 @@ void VideoDecoder::CreateSDLRenderer() {
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!renderer)
         throw std::runtime_error("SDL renderer creation failed: " + std::string(SDL_GetError()));
+}
 
-    // Set logical resolution
-    SDL_RenderSetLogicalSize(renderer, codecContext->width, codecContext->height);
+void VideoDecoder::PrintVideoMetadata() const {
+    if (!codecContext) {
+        std::cerr << "Codec context not initialized." << std::endl;
+        return;
+    }
+
+    std::cout << "Video Metadata:" << std::endl;
+    std::cout << "  Codec: " << codecContext->codec->name << std::endl;
+    std::cout << "  Width: " << codecContext->width << std::endl;
+    std::cout << "  Height: " << codecContext->height << std::endl;
+    std::cout << "  Bitrate: " << codecContext->bit_rate << " bps" << std::endl;
+
+    std::cout << std::endl;
 }
 
 
@@ -110,7 +130,8 @@ void VideoDecoder::DecodeAndRenderFrames() {
     packet.size = 0;
 
     AVFrame* decodedFrame = av_frame_alloc();
-
+    // Get the time base of the video stream
+    AVRational timeBase = formatContext->streams[videoStreamIndex]->time_base;
     while (av_read_frame(formatContext, &packet) >= 0) {
         if (packet.stream_index == videoStreamIndex) {
             avcodec_send_packet(codecContext, &packet);
@@ -135,9 +156,16 @@ void VideoDecoder::DecodeAndRenderFrames() {
 
                 // Update the renderer
                 SDL_RenderPresent(renderer);
+                // Calculate the frame rate
+                double fps = 1 / av_q2d(codecContext->time_base);
 
-                // Delay to control frame rate (adjust as needed)
-                SDL_Delay(16);
+                // Calculate the delay based on the frame rate
+                int64_t delay = static_cast<int64_t>(1000.0 / fps);  // Delay in milliseconds
+
+                SDL_Delay(static_cast<Uint32>(delay));
+
+
+
             }
         }
         av_packet_unref(&packet);
