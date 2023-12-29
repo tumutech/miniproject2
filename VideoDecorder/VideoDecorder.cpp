@@ -12,7 +12,11 @@ int main(int argc, char* argv[]) {
     }
 
     try {
-        VideoDecoder videoDecoder("C:\\Users\\TUMUTECH\\Pictures\\Camera Roll\\c.mp4");
+        //VideoDecoder videoDecoder("C:\\Users\\TUMUTECH\\Pictures\\Camera Roll\\c.mp4");
+        std::cout << "Enter the file path: in the formart C:\\Users\\TUMUTECH\\Pictures\\Camera Roll\\c.mp4 where c.mp4 is the filename\n ";
+        std::string filePath;
+        std::getline(std::cin, filePath);
+        VideoDecoder videoDecoder(filePath);
         videoDecoder.Initialize();
         videoDecoder.Play();
     }
