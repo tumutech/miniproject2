@@ -16,21 +16,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestCases", "..\TestCases\T
 		{D2A2B7F1-DABA-4F79-8DBA-3517AFFA67CC} = {D2A2B7F1-DABA-4F79-8DBA-3517AFFA67CC}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Executable", "Executable", "{49D4F667-0144-444A-AB97-DE79BD794F7B}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\..\..\Documents\Video Decorder Executable\avcodec-58.dll = ..\..\..\..\Documents\Video Decorder Executable\avcodec-58.dll
-		..\..\..\..\Documents\Video Decorder Executable\avdevice-58.dll = ..\..\..\..\Documents\Video Decorder Executable\avdevice-58.dll
-		..\..\..\..\Documents\Video Decorder Executable\avfilter-7.dll = ..\..\..\..\Documents\Video Decorder Executable\avfilter-7.dll
-		..\..\..\..\Documents\Video Decorder Executable\avformat-58.dll = ..\..\..\..\Documents\Video Decorder Executable\avformat-58.dll
-		..\..\..\..\Documents\Video Decorder Executable\avutil-56.dll = ..\..\..\..\Documents\Video Decorder Executable\avutil-56.dll
-		..\..\..\..\Documents\Video Decorder Executable\postproc-55.dll = ..\..\..\..\Documents\Video Decorder Executable\postproc-55.dll
-		..\..\..\..\Documents\Video Decorder Executable\SDL2.dll = ..\..\..\..\Documents\Video Decorder Executable\SDL2.dll
-		..\..\..\..\Documents\Video Decorder Executable\swresample-3.dll = ..\..\..\..\Documents\Video Decorder Executable\swresample-3.dll
-		..\..\..\..\Documents\Video Decorder Executable\swscale-5.dll = ..\..\..\..\Documents\Video Decorder Executable\swscale-5.dll
-		..\..\..\..\Documents\Video Decorder Executable\TestCases.dll = ..\..\..\..\Documents\Video Decorder Executable\TestCases.dll
-		..\..\..\..\Documents\Video Decorder Executable\VideoDecorder.exe = ..\..\..\..\Documents\Video Decorder Executable\VideoDecorder.exe
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
