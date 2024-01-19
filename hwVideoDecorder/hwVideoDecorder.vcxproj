@@ -161,6 +161,7 @@
     <Import Project="packages\FFmpeg.Nightly.20200831.1.0\build\native\FFmpeg.Nightly.targets" Condition="Exists('packages\FFmpeg.Nightly.20200831.1.0\build\native\FFmpeg.Nightly.targets')" />
     <Import Project="packages\sdl2.v140.redist.2.0.4\build\native\sdl2.v140.redist.targets" Condition="Exists('packages\sdl2.v140.redist.2.0.4\build\native\sdl2.v140.redist.targets')" />
     <Import Project="packages\sdl2.v140.2.0.4\build\native\sdl2.v140.targets" Condition="Exists('packages\sdl2.v140.2.0.4\build\native\sdl2.v140.targets')" />
+    <Import Project="..\VideoDecorder\packages\FFmpeg.Nightly.20200831.1.0\build\native\FFmpeg.Nightly.targets" Condition="Exists('..\VideoDecorder\packages\FFmpeg.Nightly.20200831.1.0\build\native\FFmpeg.Nightly.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -169,5 +170,6 @@
     <Error Condition="!Exists('packages\FFmpeg.Nightly.20200831.1.0\build\native\FFmpeg.Nightly.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\FFmpeg.Nightly.20200831.1.0\build\native\FFmpeg.Nightly.targets'))" />
     <Error Condition="!Exists('packages\sdl2.v140.redist.2.0.4\build\native\sdl2.v140.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\sdl2.v140.redist.2.0.4\build\native\sdl2.v140.redist.targets'))" />
     <Error Condition="!Exists('packages\sdl2.v140.2.0.4\build\native\sdl2.v140.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\sdl2.v140.2.0.4\build\native\sdl2.v140.targets'))" />
+    <Error Condition="!Exists('..\VideoDecorder\packages\FFmpeg.Nightly.20200831.1.0\build\native\FFmpeg.Nightly.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\VideoDecorder\packages\FFmpeg.Nightly.20200831.1.0\build\native\FFmpeg.Nightly.targets'))" />
   </Target>
 </Project>
